@@ -1,0 +1,60 @@
+---
+- block:
+  - name: "{{ tenant.name | upper }} | Create catalog version {{ catalog.version }}"
+    template:
+      src: "{{ tenant.name | lower }}/catalog-{{ catalog.version }}.json.j2"
+      dest: "{{ app_home }}/{{ tenant.name | lower }}-catalog-{{ catalog.version }}.json"
+      mode: 0640 
+    register: catalog_json
+      
+  - set_fact:
+      catalog_file: 
+        src: "{{catalog_json.dest }}"
+        remote_src: true
+ 
+  when: catalog.catalog.template is defined   
+  
+- block:
+  - set_fact:
+      catalog_file: 
+        src: "{{ catalog.src }}"
+        remote_src: true    
+  
+  - name: unarchive 
+    unarchive:
+      src: "{{ catalog.file.src }}"
+      dest: "{{ app_home }}"
+      remote_src: "{{ catalog.file.remote_src }}"
+    
+  when: catalog.catalog.template is undefined      
+  
+- name: "{{ tenant.name | upper }} | load catalog version list"
+  uri:
+    url: "https://localhost:8443/api/catalog"
+    method: GET
+    status_code: 200
+    validate_certs: false
+    return_content: true
+    headers:
+      X-TENANT: "{{ tenant.name }}"  
+  register: catalogs     
+            
+- name:  "{{ tenant.name | upper }} | check existence of catalog version {{ catalog.version }}"
+  set_fact:
+    existing: "{{catalogs.json._embedded.baseCatalogVersions | default([]) | selectattr('version', 'eq', catalog.version)| list | length > 0}}"        
+        
+- name: "{{ tenant.name  | upper }} | import catalog version {{ catalog.version }}"
+  uri:
+    url: "https://localhost:8443/api/catalog"
+    #url: "{{ asset_server }}/api/catalog"    
+    method: POST
+    #src: "{{ item.catalog.src }}"
+    src: "{{ catalog_file.src }}"
+    remote_src: "{{ catalog_file.remote_src }}"
+    body_format: json
+    status_code: 201 
+    validate_certs: false
+    headers:
+      X-TENANT: "{{ tenant.name }}"  
+  when: not existing
+    
