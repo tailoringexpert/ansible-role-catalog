@@ -1,0 +1,17 @@
+--- 
+- name: "{{ tenant.name | upper }} | create directories for templates"
+  file:
+    path: "{{ catalog.templates.dest }}"
+    state: directory    
+  loop: "{{ tenant.catalog}}"
+  loop_control:
+    loop_var: catalog  
+    
+- name: "{{ tenant.name | upper }} | install templates"
+  unarchive:
+    src: "{{ catalog.templates.src }}"
+    dest: "{{ catalog.templates.dest }}"
+    remote_src: "{{ catalog.templates.remote_src }}"
+  loop: "{{ tenant.catalog}}"
+  loop_control:
+    loop_var: catalog  

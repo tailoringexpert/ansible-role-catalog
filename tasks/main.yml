@@ -1,0 +1,26 @@
+---    
+- name: Create directory layout
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  with_items: "{{ catalog_directories }}"
+  become: true
+  remote_user: "{{ sudo_user }}"
+  when: item | length > 0
+  
+  
+- include_tasks: 
+    file: catalogs.yml
+  loop: "{{ tenants }}"  
+  loop_control:
+    loop_var: tenant  
+    
+
+- include_tasks: 
+    file: templates.yml
+  loop: "{{ tenants }}"  
+  loop_control:
+    loop_var: tenant  
+    

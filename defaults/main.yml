@@ -1,0 +1,23 @@
+---
+app_serverport: 8443
+
+app_home: "/app"
+app_template:  "{{ app_home }}/templates"
+
+
+catalog_directories: [ 
+  "{{ app_template }}"
+]  
+ 
+tenants: []  
+#  - name: tenant
+#    catalog: 
+#      - version: 8.2.1
+#        catalog:
+#          template: tenant/catalog-8.2.1.json
+#          remote_src: true
+#        templates:
+#          src: "{{ app_version }}/tenant/tailoringexpert-tenant-templates-0.0.5-SNAPSHOT-templates.zip"
+#          dest: "{{ app_template }}/tenant/"  
+#          remote_src: no  
+

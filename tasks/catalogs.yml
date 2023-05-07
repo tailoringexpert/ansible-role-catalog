@@ -1,0 +1,9 @@
+---
+- include_tasks: 
+    file: catalog.yml
+    apply:
+      tags:
+        - catalog
+  loop: "{{ tenant.catalog }}"  
+  loop_control:
+    loop_var: catalog  
