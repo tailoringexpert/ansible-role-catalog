@@ -1,0 +1,30 @@
+---
+app_version: 0.0.5
+app_snapshot: "SNAPSHOT"
+app_serverport: 8443
+
+
+app_home: "/app"
+app_template:  "{{ app_home }}/templates"
+
+
+directories: [ 
+  "{{ app_template }}"
+]  
+ 
+
+
+tenants: []  
+#- name: demo
+#  catalog: 
+#    - version: 8.2.1
+#      catalog:
+#        template: demo/catalog-8.2.1.json
+#        remote_src: true
+#      templates:
+#        src: "{{ app_version }}/demo/tailoringexpert-demo-templates-0.0.5-SNAPSHOT-templates.zip"
+#        dest: "{{ app_template }}/demo/"  
+#        remote_src: no  
+
+service_dir: /etc/systemd/system
+
